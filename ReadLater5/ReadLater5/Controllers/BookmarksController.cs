@@ -5,110 +5,114 @@ using System.Collections.Generic;
 
 namespace ReadLater5.Controllers
 {
-    public class CategoriesController : Controller
+    public class BookmarksController : Controller
     {
         private ICategoryService _categoryService;
-        public CategoriesController(ICategoryService categoryService)
+        private IBookmarkService _bookmarkService;
+
+        public BookmarksController(CategoryService categoryService, BookmarkService bookmarkService)
         {
             _categoryService = categoryService;
+            _bookmarkService = bookmarkService;
         }
-        // GET: Categories
+
+        // GET: Bookmarks
         public IActionResult Index()
         {
-            List<Category> model = _categoryService.GetCategories();
+            List<Bookmark> model = _bookmarkService.GetBookmarks();
             return View(model);
         }
 
-        // GET: Categories/Details/5
+        // GET: Bookmarks/Details/5
         public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
-            if (category == null)
+
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+            if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
-            return View(category);
-
+            return View(bookmark);
         }
 
-        // GET: Categories/Create
+        // GET: Bookmarks/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Bookmarks/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public IActionResult Create(Bookmark bookmark)
         {
             if (ModelState.IsValid)
             {
-                _categoryService.CreateCategory(category);
+                _bookmarkService.CreateBookmark(bookmark);
                 return RedirectToAction("Index");
             }
 
-            return View(category);
+            return View(bookmark);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Bookmarks/Edit/5
         public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
-            if (category == null)
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+            if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
-            return View(category);
+            return View(bookmark);
         }
 
-        // POST: Categories/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Bookmarks/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category)
+        public IActionResult Edit(Bookmark bookmark)
         {
             if (ModelState.IsValid)
             {
-                _categoryService.UpdateCategory(category);
+                _bookmarkService.UpdateBookmark(bookmark);
                 return RedirectToAction("Index");
             }
-            return View(category);
+            return View(bookmark);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Bookmarks/Delete/5
         public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
-            if (category == null)
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+            if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
-            return View(category);
+            return View(bookmark);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Bookmarks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            Category category = _categoryService.GetCategory(id);
-            _categoryService.DeleteCategory(category);
+            Bookmark bookmark = _bookmarkService.GetBookmarkById(id);
+            _bookmarkService.DeleteBookmark(bookmark);
             return RedirectToAction("Index");
         }
     }
