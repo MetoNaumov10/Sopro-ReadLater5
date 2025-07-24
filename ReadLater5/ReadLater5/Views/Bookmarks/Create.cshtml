@@ -1,4 +1,13 @@
-﻿@model Entity.Bookmark
+﻿@using Microsoft.AspNetCore.Http
+@model Entity.Bookmark
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+
+@{
+    var tokens = Xsrf.GetAndStoreTokens(Context);
+}
+
+<input type="hidden" id="RequestVerificationToken" value="@tokens.RequestToken" />
 
 @{
     ViewData["Title"] = "Create";
@@ -24,8 +33,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.Categories"></select>
+                <select id="CategoryId" asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
             </div>
+            <!-- Trigger Button -->
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                Add Category
+            </button>
             <div class="form-group">
                 <label asp-for="CreateDate" class="control-label"></label>
                 <input asp-for="CreateDate" class="form-control" />
@@ -36,6 +49,35 @@
             </div>
         </form>
     </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" onsubmit="return submitCategoryForm(this);" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div id="categoryError" class="text-danger mb-2"></div>
+
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" name="name" required />
+                        </div>
+
+                        @Html.AntiForgeryToken()
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div>
@@ -44,4 +86,57 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function submitCategoryForm(form) {
+            const name = form.name.value.trim();
+            const errorDiv = document.getElementById('categoryError');
+            const token = form.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            if (!name) {
+                errorDiv.textContent = "Name is required.";
+                return false;
+            }
+
+            const formData = new FormData();
+            formData.append("name", name);
+
+            fetch("/Bookmarks/AddCategoryAjax", {
+                method: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                },
+                body: formData
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const msg = await res.text();
+                    throw new Error(msg);
+                }
+                return res.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    const select = document.getElementById("CategoryId");
+                    const option = document.createElement("option");
+                    option.value = result.category.id;
+                    option.textContent = result.category.name;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    bootstrap.Modal.getInstance(document.getElementById("addCategoryModal")).hide();
+                    form.reset();
+                    errorDiv.textContent = "";
+                } else {
+                    errorDiv.textContent = result.message || "Failed to create category.";
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                errorDiv.textContent = "Server error. Please try again.";
+            });
+
+            return false; // Prevent default form post
+        }
+    </script>
 }

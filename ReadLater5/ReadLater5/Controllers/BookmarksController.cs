@@ -1,9 +1,9 @@
 ﻿using Entity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Services;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ReadLater5.Controllers
 {
@@ -129,6 +129,23 @@ namespace ReadLater5.Controllers
             Bookmark bookmark = _bookmarkService.GetBookmarkById(id);
             _bookmarkService.DeleteBookmark(bookmark);
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddCategoryAjax([FromForm] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest(new { success = false, message = "Category name is required." });
+
+            var newCategory = new Category { Name = name };
+            _categoryService.CreateCategory(newCategory); // Non-async call
+
+            return Json(new
+            {
+                success = true,
+                category = new { id = newCategory.ID, name = newCategory.Name }
+            });
         }
     }
 }
