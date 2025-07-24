@@ -1,10 +1,12 @@
 ﻿using Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Collections.Generic;
 
 namespace ReadLater5.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private ICategoryService _categoryService;
@@ -12,7 +14,9 @@ namespace ReadLater5.Controllers
         {
             _categoryService = categoryService;
         }
+
         // GET: Categories
+        [Authorize]
         public IActionResult Index()
         {
             List<Category> model = _categoryService.GetCategories();
@@ -20,6 +24,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Categories/Details/5
+        [Authorize]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -36,6 +41,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Categories/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -46,6 +52,7 @@ namespace ReadLater5.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Create(Category category)
         {
             if (ModelState.IsValid)
@@ -58,6 +65,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -77,6 +85,7 @@ namespace ReadLater5.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Edit(Category category)
         {
             if (ModelState.IsValid)
@@ -88,6 +97,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -105,6 +115,7 @@ namespace ReadLater5.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
             Category category = _categoryService.GetCategory(id);

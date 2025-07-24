@@ -27,7 +27,15 @@ namespace ReadLater5
                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = true;
+                })
+
                 .AddEntityFrameworkStores<ReadLaterDataContext>();
 
             services.AddScoped<ICategoryService, CategoryService>();

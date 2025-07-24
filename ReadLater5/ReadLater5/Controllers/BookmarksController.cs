@@ -1,4 +1,5 @@
 ﻿using Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Services;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace ReadLater5.Controllers
 {
+    [Authorize]
     public class BookmarksController : Controller
     {
         private IBookmarkService _bookmarkService;
@@ -20,6 +22,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Bookmarks
+        [Authorize]
         public IActionResult Index()
         {
             List<Bookmark> model = _bookmarkService.GetBookmarks();
@@ -27,6 +30,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Bookmarks/Details/5
+        [Authorize]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -43,6 +47,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Bookmarks/Create
+        [Authorize]
         public IActionResult Create()
         {
             var categories = new SelectList(_categoryService.GetCategories().OrderBy(x => x.Name)
@@ -58,6 +63,7 @@ namespace ReadLater5.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Create(Bookmark bookmark)
         {
             if (ModelState.IsValid)
@@ -70,6 +76,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Bookmarks/Edit/5
+        [Authorize]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -96,6 +103,7 @@ namespace ReadLater5.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Edit(Bookmark bookmark)
         {
             if (ModelState.IsValid)
@@ -107,6 +115,7 @@ namespace ReadLater5.Controllers
         }
 
         // GET: Bookmarks/Delete/5
+        [Authorize]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -124,6 +133,7 @@ namespace ReadLater5.Controllers
         // POST: Bookmarks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
             Bookmark bookmark = _bookmarkService.GetBookmarkById(id);
@@ -133,6 +143,7 @@ namespace ReadLater5.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult AddCategoryAjax([FromForm] string name)
         {
             if (string.IsNullOrWhiteSpace(name))
