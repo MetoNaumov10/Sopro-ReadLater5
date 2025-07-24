@@ -2,6 +2,7 @@
 using Entity;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Services
 {
@@ -31,9 +32,9 @@ namespace Services
             return _readLaterDataContext.Categories.Where(x=>x.UserId == userId).ToList();
         }
 
-        public Category GetCategory(int id)
+        public Category GetCategory(int id, string userId)
         {
-            return _readLaterDataContext.Categories.FirstOrDefault(c => c.ID == id);
+            return _readLaterDataContext.Categories.FirstOrDefault(c => c.ID == id && c.UserId == userId);
         }
 
         public Category GetCategory(string name)

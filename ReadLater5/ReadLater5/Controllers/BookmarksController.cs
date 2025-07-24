@@ -40,7 +40,8 @@ namespace ReadLater5.Controllers
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
 
-            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id, userId);
             if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
@@ -89,14 +90,14 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id, userId);
 
             if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var categories = new SelectList(_categoryService.GetCategories(userId).OrderBy(x => x.Name)
                 .ToDictionary(t => t.ID, t => t.Name), "Key", "Value");
@@ -133,11 +134,15 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id, userId);
+
             if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
+
             return View(bookmark);
         }
 
@@ -147,8 +152,11 @@ namespace ReadLater5.Controllers
         [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
-            Bookmark bookmark = _bookmarkService.GetBookmarkById(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Bookmark bookmark = _bookmarkService.GetBookmarkById(id, userId);
             _bookmarkService.DeleteBookmark(bookmark);
+
             return RedirectToAction("Index");
         }
 

@@ -33,11 +33,14 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Category category = _categoryService.GetCategory((int)id, userId);
+
             if (category == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
+
             return View(category);
 
         }
@@ -77,11 +80,15 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Category category = _categoryService.GetCategory((int)id, userId);
+
             if (category == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
+
             return View(category);
         }
 
@@ -111,11 +118,15 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
-            Category category = _categoryService.GetCategory((int)id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Category category = _categoryService.GetCategory((int)id, userId);
+
             if (category == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
+
             return View(category);
         }
 
@@ -125,8 +136,11 @@ namespace ReadLater5.Controllers
         [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
-            Category category = _categoryService.GetCategory(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Category category = _categoryService.GetCategory(id, userId);
             _categoryService.DeleteCategory(category);
+
             return RedirectToAction("Index");
         }
     }

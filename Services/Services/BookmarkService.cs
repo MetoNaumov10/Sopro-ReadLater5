@@ -28,9 +28,9 @@ namespace Services
             return _readLaterDataContext.Bookmark.Where(x=>x.UserId == userId).Include(x=>x.Category).ToList();
         }
 
-        public Bookmark GetBookmarkById(int id)
+        public Bookmark GetBookmarkById(int id, string userId)
         {
-            return _readLaterDataContext.Bookmark.Include(x => x.Category).FirstOrDefault(x => x.ID == id);
+            return _readLaterDataContext.Bookmark.Include(x => x.Category).FirstOrDefault(x => x.ID == id && x.UserId == userId);
         }
 
         public void UpdateBookmark(Bookmark bookmark)
