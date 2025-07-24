@@ -2,6 +2,7 @@
 using Entity;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
@@ -24,12 +25,12 @@ namespace Services
 
         public List<Bookmark> GetBookmarks()
         {
-            return _readLaterDataContext.Bookmark.ToList();
+            return _readLaterDataContext.Bookmark.Include(x=>x.Category).ToList();
         }
 
         public Bookmark GetBookmarkById(int id)
         {
-            return _readLaterDataContext.Bookmark.FirstOrDefault(x => x.ID == id);
+            return _readLaterDataContext.Bookmark.Include(x => x.Category).FirstOrDefault(x => x.ID == id);
         }
 
         public void UpdateBookmark(Bookmark bookmark)

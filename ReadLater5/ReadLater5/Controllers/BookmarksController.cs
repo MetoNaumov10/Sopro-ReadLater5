@@ -2,18 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ReadLater5.Controllers
 {
     public class BookmarksController : Controller
     {
-        private ICategoryService _categoryService;
         private IBookmarkService _bookmarkService;
+        private ICategoryService _categoryService;
+        
 
-        public BookmarksController(CategoryService categoryService, BookmarkService bookmarkService)
+        public BookmarksController(IBookmarkService bookmarkService, ICategoryService categoryService)
         {
-            _categoryService = categoryService;
             _bookmarkService = bookmarkService;
+            _categoryService = categoryService;
         }
 
         // GET: Bookmarks
@@ -42,6 +45,11 @@ namespace ReadLater5.Controllers
         // GET: Bookmarks/Create
         public IActionResult Create()
         {
+            var categories = new SelectList(_categoryService.GetCategories().OrderBy(x => x.Name)
+                .ToDictionary(t => t.ID, t => t.Name), "Key", "Value");
+
+            ViewBag.Categories = categories;
+
             return View();
         }
 
@@ -69,10 +77,17 @@ namespace ReadLater5.Controllers
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status400BadRequest);
             }
             Bookmark bookmark = _bookmarkService.GetBookmarkById((int)id);
+
             if (bookmark == null)
             {
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
+
+            var categories = new SelectList(_categoryService.GetCategories().OrderBy(x => x.Name)
+                .ToDictionary(t => t.ID, t => t.Name), "Key", "Value");
+
+            ViewBag.Categories = categories;
+
             return View(bookmark);
         }
 
