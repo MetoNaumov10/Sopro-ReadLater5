@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace ReadLater5.Controllers
 {
@@ -19,7 +20,8 @@ namespace ReadLater5.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            List<Category> model = _categoryService.GetCategories();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Category> model = _categoryService.GetCategories(userId);
             return View(model);
         }
 
@@ -57,6 +59,9 @@ namespace ReadLater5.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                category.UserId = userId;
+
                 _categoryService.CreateCategory(category);
                 return RedirectToAction("Index");
             }
@@ -90,6 +95,8 @@ namespace ReadLater5.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                category.UserId = userId;
                 _categoryService.UpdateCategory(category);
                 return RedirectToAction("Index");
             }

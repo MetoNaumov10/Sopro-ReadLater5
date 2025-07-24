@@ -6,7 +6,7 @@ namespace Services
     public interface IBookmarkService
     {
         Bookmark CreateBookmark(Bookmark bookmark);
-        List<Bookmark> GetBookmarks();
+        List<Bookmark> GetBookmarks(string userId);
         Bookmark GetBookmarkById(int id);
         void UpdateBookmark(Bookmark bookmark);
         void DeleteBookmark(Bookmark bookmark);

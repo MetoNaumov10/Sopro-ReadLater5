@@ -6,7 +6,7 @@ namespace Services
     public interface ICategoryService
     {
         Category CreateCategory(Category category);
-        List<Category> GetCategories();
+        List<Category> GetCategories(string userId);
         Category GetCategory(int id);
         Category GetCategory(string name);
         void UpdateCategory(Category category);

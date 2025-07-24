@@ -23,9 +23,9 @@ namespace Services
             return bookmark;
         }
 
-        public List<Bookmark> GetBookmarks()
+        public List<Bookmark> GetBookmarks(string userId)
         {
-            return _readLaterDataContext.Bookmark.Include(x=>x.Category).ToList();
+            return _readLaterDataContext.Bookmark.Where(x=>x.UserId == userId).Include(x=>x.Category).ToList();
         }
 
         public Bookmark GetBookmarkById(int id)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace ReadLater5.Controllers
 {
@@ -25,7 +26,8 @@ namespace ReadLater5.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            List<Bookmark> model = _bookmarkService.GetBookmarks();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<Bookmark> model = _bookmarkService.GetBookmarks(userId);
             return View(model);
         }
 
@@ -50,7 +52,8 @@ namespace ReadLater5.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            var categories = new SelectList(_categoryService.GetCategories().OrderBy(x => x.Name)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var categories = new SelectList(_categoryService.GetCategories(userId).OrderBy(x => x.Name)
                 .ToDictionary(t => t.ID, t => t.Name), "Key", "Value");
 
             ViewBag.Categories = categories;
@@ -68,6 +71,9 @@ namespace ReadLater5.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                bookmark.UserId = userId;
+
                 _bookmarkService.CreateBookmark(bookmark);
                 return RedirectToAction("Index");
             }
@@ -90,7 +96,9 @@ namespace ReadLater5.Controllers
                 return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound);
             }
 
-            var categories = new SelectList(_categoryService.GetCategories().OrderBy(x => x.Name)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var categories = new SelectList(_categoryService.GetCategories(userId).OrderBy(x => x.Name)
                 .ToDictionary(t => t.ID, t => t.Name), "Key", "Value");
 
             ViewBag.Categories = categories;
@@ -108,6 +116,9 @@ namespace ReadLater5.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                bookmark.UserId = userId;
+
                 _bookmarkService.UpdateBookmark(bookmark);
                 return RedirectToAction("Index");
             }

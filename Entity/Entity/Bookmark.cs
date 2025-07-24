@@ -18,5 +18,8 @@ namespace Entity
         public virtual Category Category { get; set; }
 
         public DateTime CreateDate { get; set; }
+
+        [StringLength(maximumLength: 450)]
+        public string UserId { get; set; }
     }
 }
